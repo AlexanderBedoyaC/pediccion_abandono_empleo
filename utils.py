@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
 
 #Diccionario de datos
 DATA_DICT = {
@@ -85,4 +88,66 @@ def univariado_torta(df, col, hole=0):
     
     return tabla
 
-#
+# Definición de función que utiliza RIC para la detección de valores atípicos
+def outlier_IQR(df, column, thr):
+    Q1 = np.quantile(df[column], 0.25) # first quartile
+    Q3 = np.quantile(df[column], 0.75) # third quartile
+    IQR = Q3 - Q1 # inter - quartile range
+    threshold = thr * IQR # defining the threshold
+    lower = Q1 - threshold
+    upper = Q3 + threshold
+    lower_bound = df[df[column] < lower]
+    upper_bound = df[df[column] > upper]
+
+    #Imprimir IQR, threshold, lower bound, upper bound and total number of outlier
+    print('IQR is:', IQR)
+    print('Threshold is:', threshold)
+    print('Lower bound is:', lower)
+    print('Upper bound is:', upper)
+    print('total number of outliers are:', lower_bound.shape[0] + upper_bound.shape[0])
+    return upper, lower
+
+#Imputar outliers con la mediana por grupo
+def imputar_outliers(df, col, lower, upper):
+    
+    df_0 = df[df.attrition=='No']
+    df_1 = df[df.attrition=='Yes']
+    median_0 = df_0[col].median()
+    median_1 = df_1[col].median()
+    
+    df[col] = np.where((df['attrition']=='No') & ( (df[col] < lower) | (df[col] > upper) ), median_0,
+                np.where((df['attrition']=='Yes') & ( (df[col] < lower) | (df[col] > upper) ), median_1,
+                df[col]))
+    
+    return df
+
+#Función para esplit
+def split(X, y, test_size = 0.3):
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+    
+    print('X train shape: ', X_train.shape)
+    print('y train shape: ', X_test.shape)
+    print('X test shape: ', y_train.shape)
+    print('y test shape: ', y_test.shape)
+    
+    return X_train, X_test, y_train, y_test
+
+#Pipeline para dummies y escalar variables
+def transformar_datos(X):
+    # Selecciona las columnas numéricas y categóricas
+    numeric_features = list(X.select_dtypes(include=['int64', 'float64']).columns)
+    categorical_features = list(X.select_dtypes(exclude=['int64', 'float64']).columns)
+
+    # Combina los transformers en un ColumnTransformer
+    transformer = ColumnTransformer(
+        transformers=[
+            ('num', StandardScaler(), numeric_features),
+            ('cat', OneHotEncoder(), categorical_features)
+        ], remainder='passthrough')
+
+    # Crea el pipeline completo
+    pipeline_transform = Pipeline(steps=[('transformer', transformer)])
+
+    # Ajusta y transforma los datos con el pipeline
+    return pipeline_transform.fit_transform(X)
