@@ -48,16 +48,23 @@ def tabla_frecuencias(df, col):
     tabla = df.groupby([col])[['employee_id']].count().rename(columns={'employee_id':'Frecuencia Absoluta'}).reset_index()
     tabla['Frecuencia Relativa'] = tabla['Frecuencia Absoluta'].apply(lambda x: str(round(100*x/n, 3))+' %')
     
-    return tabla
+    return tabla.sort_values(by='Frecuencia Absoluta', ascending=False)
 
 #Genera tabla de frecuencias y gráfico de barras para una variable
 def univariado_barras(df, col, orientation='v'):
     
+    if orientation=='v':
+        x = col
+        y = ['Frecuencia Absoluta']
+    else:
+        x = ['Frecuencia Absoluta']
+        y = col
+    
     tabla = tabla_frecuencias(df, col)
     
     fig = px.bar(tabla,
-             x = col,
-             y = ['Frecuencia Absoluta'],
+             x = x,
+             y = y,
              text_auto = True,
              title = DATA_DICT[col],
              height = 400,
@@ -72,7 +79,6 @@ def univariado_barras(df, col, orientation='v'):
 def univariado_torta(df, col, hole=0):
     
     tabla = tabla_frecuencias(df, col)
-    
     labels = tabla[col]
     values = tabla['Frecuencia Absoluta']
 
