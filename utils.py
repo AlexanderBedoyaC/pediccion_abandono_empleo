@@ -157,3 +157,20 @@ def transformar_datos(X):
 
     # Ajusta y transforma los datos con el pipeline
     return pipeline_transform.fit_transform(X)
+
+#Obtener correlaciones de variables categóricas
+def corr_cat(df):
+    from scipy.stats import chi2_contingency
+    
+    cols = df.columns
+    df_corr_cat = pd.DataFrame()
+
+    corrs = []
+    for col in cols:
+        tabla_contingencia = pd.crosstab(df['attrition'], df[col])
+        chi2, p, _, _ = chi2_contingency(tabla_contingencia)
+        corrs.append(p)
+    df_corr_cat['attrition'] = corrs
+    df_corr_cat.index = cols
+    
+    return df_corr_cat
