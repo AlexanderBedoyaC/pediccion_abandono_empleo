@@ -139,25 +139,6 @@ def split(X, y, test_size = 0.3):
     
     return X_train, X_test, y_train, y_test
 
-#Pipeline para dummies y escalar variables
-def transformar_datos(X):
-    # Selecciona las columnas numéricas y categóricas
-    numeric_features = list(X.select_dtypes(include=['int64', 'float64']).columns)
-    categorical_features = list(X.select_dtypes(exclude=['int64', 'float64']).columns)
-
-    # Combina los transformers en un ColumnTransformer
-    transformer = ColumnTransformer(
-        transformers=[
-            ('num', StandardScaler(), numeric_features),
-            ('cat', OneHotEncoder(), categorical_features)
-        ], remainder='passthrough')
-
-    # Crea el pipeline completo
-    pipeline_transform = Pipeline(steps=[('transformer', transformer)])
-
-    # Ajusta y transforma los datos con el pipeline
-    return pipeline_transform.fit_transform(X)
-
 #Obtener correlaciones de variables categóricas
 def corr_cat(df):
     from scipy.stats import chi2_contingency
