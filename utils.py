@@ -155,3 +155,15 @@ def corr_cat(df):
     df_corr_cat.index = cols
     
     return df_corr_cat
+#Obtener tablas de contingencia y graficarlas
+
+def Analisisbivariado(df,variables,orient,mode,color):
+    contingency_table=pd.crosstab(df[variables[0]],df[variables[1]])
+    contingency_table = contingency_table.div(contingency_table.sum(axis=1), axis=0)
+    fig=px.bar(contingency_table,orientation=orient,barmode=mode,color_discrete_sequence=color)
+    fig.update_layout(width=800,title=dict(text=DATA_DICT[variables[1]], x=0.5))
+    fig.update_traces(texttemplate='%{value:.2%}', textposition='outside')
+    fig.show()
+    print("Tabla de contingencia:")
+    return contingency_table
+    
