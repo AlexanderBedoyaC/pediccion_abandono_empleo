@@ -299,3 +299,32 @@ def bosqueAleatorio (df,y):
     }
     
     return resultados
+
+#Matriz de confusión
+def conf_matrix(model, X, y, t):
+    
+    from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+    import matplotlib.pyplot as plt
+
+    y_pred = model.predict(X)
+
+    mc = confusion_matrix(y, y_pred)
+    
+    print('-'*30,t,'-'*30)
+    
+    cm1_display = ConfusionMatrixDisplay(confusion_matrix = mc)
+    cm1_display.plot()
+    plt.show()
+
+    tn, fp, fn, tp = mc.ravel()
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    especificidad = tn / (fp + tn)
+    f1_score = 2*(precision*recall)/(precision+recall)
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'Especificidad: {especificidad}')
+    print(f'F1 score: {f1_score}')
+    print('Train score: ',model.score(X,y))
+    
+    return precision, recall, especificidad, f1_score
