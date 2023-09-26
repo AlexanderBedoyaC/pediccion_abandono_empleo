@@ -301,7 +301,7 @@ def bosqueAleatorio (df,y):
     return resultados
 
 #Matriz de confusión
-def conf_matrix(model, X, y, t):
+def metricas(model, X, y, t):
     
     from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
     import matplotlib.pyplot as plt
