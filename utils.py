@@ -299,3 +299,20 @@ def bosqueAleatorio (df,y):
     }
     
     return resultados
+
+def metricas(X,y,model):
+    from sklearn.metrics import confusion_matrix
+    y_pred= model.predict(X)
+    mc_train = confusion_matrix(y, y_pred)
+
+    tn, fp, fn, tp = mc_train.ravel()
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    especificidad = tn / (fp + tn)
+    f1_score = 2*(precision*recall)/(precision+recall)
+    print('-'*30,'Metricas','-'*30)
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'Especificidad: {especificidad}')
+    print(f'F1 score: {f1_score}')
+    print('Train score: ',model.score(X,y))
