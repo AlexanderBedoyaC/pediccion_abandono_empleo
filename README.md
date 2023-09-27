@@ -73,7 +73,7 @@ A continuación, se detalla aún más el diseño de solución:
 
 **Aplicación de Algoritmos/Técnicas de Modelado**
 - Seleccionar algoritmos adecuados para abordar el problema, como Regresión Logística, Random Forest Classifier,
-  gradientt Boosting y Support Vector Machine.
+  gradient Boosting y Support Vector Machine.
 
 **Comparación y Selección de Técnicas**
 - Evaluar los diferentes modelos y técnicas de clasificación utilizando métricas de rendimiento como precisión,
