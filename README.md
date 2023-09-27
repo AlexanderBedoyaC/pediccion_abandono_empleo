@@ -41,7 +41,7 @@ empleo, y así poder tomar acciones preventivas que les permita retener a la may
 
 A continuación, se detalla aún más el diseño de solución:
 
-**Análisis de Datos y Negocio**
+## Análisis de Datos y Negocio
 
 **Limpieza y Transformación de los Datos**
 - Llevar a cabo una limpieza de datos para tratar valores faltantes o anómalos.
@@ -61,7 +61,7 @@ A continuación, se detalla aún más el diseño de solución:
   las variables más relevantes.
 - Evaluar si es necesario crear nuevas características basadas en el análisis exploratorio.
 
-**Machine Learning**
+## Machine Learning
 
 **Selección de variables**
 - Utilizar diferentes técnicas robustas de selección de variables y regularización para disminuir el número
@@ -90,7 +90,7 @@ A continuación, se detalla aún más el diseño de solución:
 - Realizar un análisis de importancia de características para comprender qué variables influyen más en las predicciones.
 - Interpretar los resultados del modelo para obtener información sobre qué características aumentan la probabilidad de rotación.
 
-**Conclusiones Finales y Recomendaciones**
+## Conclusiones Finales y Recomendaciones
 - Resumir los hallazgos y conclusiones del proyecto.
 - Proporcionar recomendaciones basadas en el análisis para reducir la rotación de empleados, como mejoras en el entorno
   de trabajo, ajustes salariales, programas de capacitación, etc.
