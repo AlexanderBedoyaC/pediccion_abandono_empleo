@@ -25,8 +25,14 @@ empleados van a abandonar su empleo para tomar acciones preventivas que les perm
 mayoría de los empleados en riesgo. También quieren saber cuál de estas variables es la más
 importante y debe abordarse de inmediato.
 
-# Diseño de solución propuesto
+# Integrantes
 
+- Brahayan Stiven Gil Henao
+- Jhon Alexander Bedoya Carvajal
+- Sebastián Salamanca Mendez
+
+
+# Diseño de solución propuesto
 
 Para abordar este problema se cuenta con información general del empleado, resultados de encuesta 
 realizada a los empleados respecto a su nivel de satisfacción con su empleo actual, resultados 
