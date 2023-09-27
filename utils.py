@@ -167,3 +167,203 @@ def Analisisbivariado(df,variables,orient,mode,color):
     print("Tabla de contingencia:")
     return contingency_table
     
+#Regresión logística
+def regresionLogistica (df,y):
+    
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import confusion_matrix
+    
+    X_train, X_test,y_train,y_test = train_test_split(df,y,test_size=0.2, random_state=42)
+
+    num = df.select_dtypes(include=[float,int]).columns
+    pipeline = ColumnTransformer([('num',StandardScaler(),num)],remainder='passthrough')
+    X_train_std = pipeline.fit_transform(X_train)
+    X_test_std = pipeline.transform(X_test)
+
+    lr = LogisticRegression(max_iter=1000,class_weight="balanced", random_state=42).fit(X_train_std,y_train)
+    y_pred_train = lr.predict(X_train_std)
+    y_pred_test = lr.predict(X_test_std)
+    y_pred_prob_train = lr.predict_proba(X_train_std)
+    y_pred_prob_test = lr.predict_proba(X_test_std)
+    mc_train=confusion_matrix(y_train,y_pred_train)
+    mc_test=confusion_matrix(y_test,y_pred_test)
+    tn, fp, fn, tp = mc_train.ravel()
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    especificidad = tn / (fp + tn)
+    f1_score = 2*(precision*recall)/(precision+recall)
+    print('-'*30,'TRAIN','-'*30)
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'Especificidad: {especificidad}')
+    print(f'F1 score: {f1_score}')
+    print('Train score: ',lr.score(X_train_std,y_train))
+
+    tn, fp, fn, tp = mc_test.ravel()
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    especificidad = tn / (fp + tn)
+    f1_score = 2*(precision*recall)/(precision+recall)
+    accuracy = lr.score(X_test_std,y_test)
+    print('-'*30,'TEST','-'*30)
+    print(f'Precision : {precision}')
+    print(f'Recall : {recall}')
+    print(f'Especificidad : {especificidad}')
+    print(f'F1 score : {f1_score}')
+    print('Test score: ',accuracy)
+    
+    resultados = {
+        'X_train' : X_train,
+        'X_test' : X_test,
+        'y_train' : y_train,
+        'y_test' : y_test,
+        'y_pred_train' : y_pred_train,
+        'y_pred_test' : y_pred_test,
+        'y_pred_prob_train' : y_pred_prob_train,
+        'y_pred_prob_test' : y_pred_prob_test,
+        'precision' : precision,
+        'recall' : recall,
+        'especificidad' : especificidad,
+        'f1_score' : f1_score,
+        'accuracy' : accuracy
+    }
+    
+    return resultados
+
+#Bosque aleatorio clasificador
+def bosqueAleatorio (df,y):
+    
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import confusion_matrix
+    
+    X_train, X_test,y_train,y_test = train_test_split(df,y,test_size=0.2, random_state=42)
+
+    num=df.select_dtypes(include=[float,int]).columns
+
+
+    ranfor=RandomForestClassifier(n_estimators=300,
+                                  max_depth=30,
+                                  n_jobs=-1,
+                                  max_leaf_nodes=20,
+                                  min_samples_leaf=10,
+                                  class_weight="balanced", random_state=42).fit(X_train,y_train)
+    y_pred_train=ranfor.predict(X_train)
+    y_pred_test=ranfor.predict(X_test)
+    y_pred_prob_train=ranfor.predict_proba(X_train)
+    y_pred_prob_test=ranfor.predict_proba(X_test)
+    mc_train=confusion_matrix(y_train,y_pred_train)
+    mc_test=confusion_matrix(y_test,y_pred_test)
+    tn, fp, fn, tp = mc_train.ravel()
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    especificidad = tn / (fp + tn)
+    f1_score = 2*(precision*recall)/(precision+recall)
+    print('-'*30,'TRAIN','-'*30)
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'Especificidad: {especificidad}')
+    print(f'F1 score: {f1_score}')
+    print('Train score: ',ranfor.score(X_train,y_train))
+
+    tn, fp, fn, tp = mc_test.ravel()
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    especificidad = tn / (fp + tn)
+    f1_score = 2*(precision*recall)/(precision+recall)
+    accuracy = ranfor.score(X_test,y_test)
+    print('-'*30,'TEST','-'*30)
+    print(f'Precision : {precision}')
+    print(f'Recall : {recall}')
+    print(f'Especificidad : {especificidad}')
+    print(f'F1 score : {f1_score}')
+    print('Test score: ',accuracy)
+    
+    resultados = {
+        'X_train' : X_train,
+        'X_test' : X_test,
+        'y_train' : y_train,
+        'y_test' : y_test,
+        'y_pred_train' : y_pred_train,
+        'y_pred_test' : y_pred_test,
+        'y_pred_prob_train' : y_pred_prob_train,
+        'y_pred_prob_test' : y_pred_prob_test,
+        'precision' : precision,
+        'recall' : recall,
+        'especificidad' : especificidad,
+        'f1_score' : f1_score,
+        'accuracy' : accuracy
+    }
+    
+    return resultados
+
+#Metricas y atriz de confusión
+def metricas(model, X, y, t):
+    
+    from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+    import matplotlib.pyplot as plt
+
+    y_pred = model.predict(X)
+
+    mc = confusion_matrix(y, y_pred)
+    
+    print('-'*30,t,'-'*30)
+    
+    cm1_display = ConfusionMatrixDisplay(confusion_matrix = mc)
+    cm1_display.plot()
+    plt.show()
+
+    tn, fp, fn, tp = mc.ravel()
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    especificidad = tn / (fp + tn)
+    f1_score = 2*(precision*recall)/(precision+recall)
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'Especificidad: {especificidad}')
+    print(f'F1 score: {f1_score}')
+    print('Train score: ',model.score(X,y))
+    
+    return precision, recall, especificidad, f1_score
+
+#Graficar curva ROC y calcular AUC
+def curvaROC(model,X,y):
+    from sklearn.metrics import roc_curve, auc
+    import matplotlib.pyplot as plt
+
+    y_pred=model.predict_proba(X)
+    # Calcular la curva ROC
+    fpr, tpr, _ = roc_curve(y, y_pred[:,1])
+    roc_auc = auc(fpr, tpr)
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(fpr, tpr, color='red', lw=2, label='Curva ROC (AUC = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], color='darkgray', lw=2, linestyle='--', label='RANDOM CLASSIFIER')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('FALSE POSITIVE RATE')
+    plt.ylabel('TRUE POSITIVE RATE')
+    plt.title('ROC CURVE')
+    plt.legend(loc="lower right")
+    plt.show()
+    return roc_auc
+
+
+#Análisis de variables numéricas vs variable objetivo
+def bivariado_numericas(df, var):
+    
+    import plotly.express as px
+    
+    fig=px.box(df, x=df['attrition'], y=df[var],orientation='v',color_discrete_sequence=px.colors.qualitative.Plotly)
+    fig.update_layout(width=800,title=dict(text=f'Attrition & {var}', x=0.5))
+    fig.show()
+    
+    funciones = [len, 'sum', 'min', 'max', 'median', 'mean', 'std', 'var', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
+    
+    res = df.groupby(['attrition'])[var].agg(funciones)
+    res.rename(columns={'<lambda_0>': 'Q1', '<lambda_1>': 'Q3'}, inplace=True)
+    
+    return res
