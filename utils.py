@@ -300,7 +300,7 @@ def bosqueAleatorio (df,y):
     
     return resultados
 
-#Matriz de confusión
+#Metricas y atriz de confusión
 def metricas(model, X, y, t):
     
     from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -329,6 +329,7 @@ def metricas(model, X, y, t):
     
     return precision, recall, especificidad, f1_score
 
+#Graficar curva ROC y calcular AUC
 def curvaROC(model,X,y):
     from sklearn.metrics import roc_curve, auc
     import matplotlib.pyplot as plt
@@ -349,3 +350,20 @@ def curvaROC(model,X,y):
     plt.legend(loc="lower right")
     plt.show()
     return roc_auc
+
+
+#Análisis de variables numéricas vs variable objetivo
+def bivariado_numericas(df, var):
+    
+    import plotly.express as px
+    
+    fig=px.box(df, x=df['attrition'], y=df[var],orientation='v',color_discrete_sequence=px.colors.qualitative.Plotly)
+    fig.update_layout(width=800,title=dict(text=f'Attrition & {var}', x=0.5))
+    fig.show()
+    
+    funciones = [len, 'sum', 'min', 'max', 'median', 'mean', 'std', 'var', lambda x: x.quantile(0.25), lambda x: x.quantile(0.75)]
+    
+    res = df.groupby(['attrition'])[var].agg(funciones)
+    res.rename(columns={'<lambda_0>': 'Q1', '<lambda_1>': 'Q3'}, inplace=True)
+    
+    return res
